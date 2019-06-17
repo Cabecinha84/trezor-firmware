@@ -1,4 +1,4 @@
-from trezorcrypto import random
+from trezorcrypto import random, slip39
 
 from .slip39_wordlist import wordlist
 
@@ -38,21 +38,10 @@ def _prefix_to_pressed_buttons(prefix: str):
     return x
 
 
-def complete_word(prefix: str, t9=False) -> int:
-    """
-    Return possible 1-letter suffixes for given word prefix.
-    Result is a bitmask, with 'a' on the lowest bit, 'b' on the second lowest, etc.
-    """
-    if not len(prefix):
-        return 0xFFFFFFFF  # all letters
-
-    mask = 0
-    words = find_words(prefix, t9)
-    for word in words:
-        if len(word) == len(prefix):  # TODO!
-            continue
-        mask |= 1 << (ord(word[len(prefix)]) - 97)  # ord('a') == 97
-    return mask
+def compute_mask(prefix: str):
+    # TODO do not convert here but store directly as buttons
+    p = int(_prefix_to_pressed_buttons(prefix))
+    return slip39.compute_mask(p)
 
 
 def generate(strength: int, entropy: bytes, count: int, threshold: int) -> list:

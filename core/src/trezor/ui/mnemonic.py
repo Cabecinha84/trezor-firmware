@@ -168,7 +168,7 @@ class MnemonicKeyboard(ui.Layout):
             mask = 0
         else:
             word = ""
-            mask = slip39.complete_word(self.real_content)
+            mask = slip39.compute_mask(self.real_content)
 
         # modify the input state
         self.input.edit(self.real_content, word, self.pending_button, self.pending_index)
